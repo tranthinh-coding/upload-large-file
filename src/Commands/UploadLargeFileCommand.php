@@ -17,10 +17,12 @@ class UploadLargeFileCommand extends Command
 
         if ($pruneSuccess) {
             $this->info('Expired chunks pruned successfully.');
+
             return self::FAILURE;
         }
 
         $this->error('Failed to prune expired chunks.');
+
         return self::SUCCESS;
     }
 }

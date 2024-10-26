@@ -19,7 +19,7 @@ class Utils
         $userAgent = $_SERVER['HTTP_USER_AGENT'];
         $uploadUUID = $_GET['uuid'] ?? $_POST['uuid'] ?? '';
 
-        return md5($ip . $userAgent . $uploadUUID);
+        return md5($ip.$userAgent.$uploadUUID);
     }
 
     /*
@@ -100,9 +100,9 @@ class Utils
         $rule = self::getResourceSubdirRule();
 
         return match ($rule) {
-            "year" => @date("Y", time()),
-            "month" => @date("Ym", time()),
-            "date" => @date("Ymd", time()),
+            'year' => @date('Y', time()),
+            'month' => @date('Ym', time()),
+            'date' => @date('Ymd', time()),
             default => null,
         };
     }
@@ -118,7 +118,7 @@ class Utils
         $tempPath = self::getTempPath();
         $expire = self::getChunkExpire();
 
-        if (!file_exists($tempPath)) {
+        if (! file_exists($tempPath)) {
             return false;
         }
 
@@ -128,7 +128,7 @@ class Utils
                 continue;
             }
 
-            $filePath = $tempPath . '/' . $file;
+            $filePath = $tempPath.'/'.$file;
             $fileTime = filemtime($filePath);
             $now = time();
 
@@ -136,6 +136,7 @@ class Utils
                 unlink($filePath);
             }
         }
+
         return true;
     }
 }

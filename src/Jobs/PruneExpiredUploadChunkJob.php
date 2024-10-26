@@ -26,4 +26,3 @@ class PruneExpiredUploadChunkJob implements ShouldQueue
         Utils::pruneChunksExpired();
     }
 }
-

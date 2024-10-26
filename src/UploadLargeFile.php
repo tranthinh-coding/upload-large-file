@@ -13,24 +13,22 @@ class UploadLargeFile
 {
     /**
      * The folder to store the final file
-     * @var string
      */
     private string $folder;
 
     /**
      * The folder to store the temporary file
-     * @var string
      */
     private string $tempPath;
 
     /**
      * The storage disk
-     * @var Filesystem
      */
     private Filesystem $storage;
 
     /**
      * The cache driver
+     *
      * @var mixed
      */
     private CacheRepository $cache;
@@ -45,7 +43,7 @@ class UploadLargeFile
 
     /**
      * Set the folder to store the final file
-     * @param string $folder
+     *
      * @return $this
      */
     public function folder(string $folder): static
@@ -57,7 +55,6 @@ class UploadLargeFile
 
     /**
      * Validate the request
-     * @return true|array
      */
     private function validate(): true|array
     {
@@ -80,16 +77,15 @@ class UploadLargeFile
 
     /**
      * Receive the request info
-     * @return array
      */
     private function receiveRequestInfo(): array
     {
         $uploadId = Utils::getUploadId();
-        $totalFile = (int)Request::get('total_chunks_file');
+        $totalFile = (int) Request::get('total_chunks_file');
         $filename = Request::get('filename');
         $chunk = Request::file('file');
         $chunkNumber = Request::get('chunk_number');
-        $randomChunkName = Str::random(40) . '.part';
+        $randomChunkName = Str::random(40).'.part';
 
         return [
             'uploadId' => $uploadId,
@@ -103,12 +99,6 @@ class UploadLargeFile
 
     /**
      * Handle the received chunk
-     * @param string $chunkName
-     * @param int $totalFile
-     * @param string $filename
-     * @param string $uploadId
-     * @param int $chunkNumber
-     * @return array
      */
     private function onReceivedChunk(string $chunkName, int $totalFile, string $filename, string $uploadId, int $chunkNumber): array
     {
@@ -128,7 +118,7 @@ class UploadLargeFile
             return [
                 'progress' => 1,
                 'message' => 'File uploaded',
-                'path' => $this->folder . '/' . $uploadId . '__' . $filename,
+                'path' => $this->folder.'/'.$uploadId.'__'.$filename,
             ];
         }
 
@@ -140,7 +130,6 @@ class UploadLargeFile
 
     /**
      * Handle upload the file
-     * @return array
      */
     public function upload(): array
     {
@@ -168,37 +157,31 @@ class UploadLargeFile
 
     /**
      * Ensure the directory exists
-     * @param string $path
-     * @return void
      */
     private function ensureDirectoryExists(string $path): void
     {
-        if (!$this->storage->exists($path)) {
+        if (! $this->storage->exists($path)) {
             $this->storage->makeDirectory($path);
         }
     }
 
     /**
      * Merge the chunk files
-     * @param string $uploadId
-     * @param int $total
-     * @param string $filename
-     * @return void
      */
     private function mergeChunkFiles(string $uploadId, int $total, string $filename): void
     {
-        $finalPath = $this->folder . '/' . $uploadId . '__' . $filename;
+        $finalPath = $this->folder.'/'.$uploadId.'__'.$filename;
         $finalFile = fopen($this->storage->path($finalPath), 'wb');
 
         $chunkNames = [];
         for ($i = 1; $i <= $total; $i++) {
-            $chunkNames[] = $this->cache->get("upload_" . $uploadId . "_chunk_" . $i);
+            $chunkNames[] = $this->cache->get('upload_'.$uploadId.'_chunk_'.$i);
         }
 
         foreach ($chunkNames as $chunkName) {
-            $chunkPath = $this->tempPath . '/' . $chunkName;
+            $chunkPath = $this->tempPath.'/'.$chunkName;
             $chunk = fopen($this->storage->path($chunkPath), 'rb');
-            while (!feof($chunk)) {
+            while (! feof($chunk)) {
                 fwrite($finalFile, fread($chunk, 1024));
             }
             fclose($chunk);
