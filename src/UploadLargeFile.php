@@ -37,24 +37,10 @@ class UploadLargeFile
 
     public function __construct()
     {
-        $this->folder = config('upload-large-file.dir_path');
-        $this->tempPath = config('upload-large-file.temp_path');
-        $this->storage = Storage::disk(config('upload-large-file.storage_disk'));
-        $this->cache = Cache::driver(config('upload-large-file.cache_driver'));
-    }
-
-    /**
-     * Get the upload id
-     * Generate a unique id for the upload from request info: browser info, ip, uuid
-     * @return string
-     */
-    private function getUploadId(): string
-    {
-        $ip = Request::ip();
-        $userAgent = Request::userAgent();
-        $uploadUUID = Request::get('uuid');
-
-        return md5($ip . $userAgent . $uploadUUID);
+        $this->folder = Utils::getDirPath();
+        $this->tempPath = Utils::getTempPath();
+        $this->storage = Storage::disk(Utils::getStorageDisk());
+        $this->cache = Cache::driver(Utils::getCacheDriver());
     }
 
     /**
@@ -98,10 +84,11 @@ class UploadLargeFile
      */
     private function receiveRequestInfo(): array
     {
-        $uploadId = $this->getUploadId();
+        $uploadId = Utils::getUploadId();
         $totalFile = (int)Request::get('total_chunks_file');
         $filename = Request::get('filename');
         $chunk = Request::file('file');
+        $chunkNumber = Request::get('chunk_number');
         $randomChunkName = Str::random(40) . '.part';
 
         return [
@@ -110,6 +97,7 @@ class UploadLargeFile
             'filename' => $filename,
             'chunk' => $chunk,
             'randomChunkName' => $randomChunkName,
+            'chunkNumber' => $chunkNumber,
         ];
     }
 
@@ -119,9 +107,10 @@ class UploadLargeFile
      * @param int $totalFile
      * @param string $filename
      * @param string $uploadId
+     * @param int $chunkNumber
      * @return array
      */
-    private function onReceivedChunk(string $chunkName, int $totalFile, string $filename, string $uploadId): array
+    private function onReceivedChunk(string $chunkName, int $totalFile, string $filename, string $uploadId, int $chunkNumber): array
     {
         if ($this->cache->has("upload_{$uploadId}_chunks") === false) {
             $this->cache->put("upload_{$uploadId}_chunks", 0);
@@ -130,7 +119,7 @@ class UploadLargeFile
         $this->cache->increment("upload_{$uploadId}_chunks", 1);
         $receivedChunks = $this->cache->get("upload_{$uploadId}_chunks");
 
-        $this->cache->put("upload_{$uploadId}_chunk_{$receivedChunks}", $chunkName);
+        $this->cache->put("upload_{$uploadId}_chunk_{$chunkNumber}", $chunkName);
 
         if ($receivedChunks === $totalFile) {
             $this->mergeChunkFiles($uploadId, $totalFile, $filename);
@@ -168,12 +157,13 @@ class UploadLargeFile
             'totalFile' => $totalFile,
             'filename' => $filename,
             'chunk' => $chunk,
-            'randomChunkName' => $randomChunkName
+            'randomChunkName' => $randomChunkName,
+            'chunkNumber' => $chunkNumber,
         ] = $this->receiveRequestInfo();
 
         $this->storage->putFileAs($this->tempPath, $chunk, $randomChunkName);
 
-        return $this->onReceivedChunk($randomChunkName, $totalFile, $filename, $uploadId);
+        return $this->onReceivedChunk($randomChunkName, $totalFile, $filename, $uploadId, $chunkNumber);
     }
 
     /**
@@ -181,7 +171,7 @@ class UploadLargeFile
      * @param string $path
      * @return void
      */
-    private function ensureDirectoryExists($path): void
+    private function ensureDirectoryExists(string $path): void
     {
         if (!$this->storage->exists($path)) {
             $this->storage->makeDirectory($path);

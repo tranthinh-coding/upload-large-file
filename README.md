@@ -25,20 +25,45 @@ This is the contents of the published config file:
 
 ```php
 return [
-    /**
-     * The path to store the temporary file
+    /*
+     |--------------------------------------------------------------------------
+     | Đường dẫn lưu trữ file tạm thời
+     |--------------------------------------------------------------------------
+     |
      */
-    "temp_path" => storage_path('app/chunk-upload-temp'),
+    'temp_path' => 'chunk-upload-temp',
 
-    /**
-     * The expiration time for the temporary file
+    /*
+     |
+     | Thời gian hết hạn cho file tạm thời
+     | Default: 24h
      */
-    "chunk_expire" => 60 * 60 * 24, // 1 day
+    'chunk_expire' => 60 * 60 * 24,
 
-    /**
-     * The path to store the final file
+    /*
+    |--------------------------------------------------------------------------
+    | Thư mục gốc lưu trữ file
+    |--------------------------------------------------------------------------
+    |
      */
-    "dir_path" => storage_path('app/uploads'),
+    'dir_path' => 'uploads',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Quy tắc tạo thư mục con
+    |--------------------------------------------------------------------------
+    |
+    | | 【Cài đặt chung】Phân theo năm, theo tháng, theo ngày, thư mục con hằng số.
+    |
+    | | Hỗ trợ các tùy chọn: 'year', 'month', 'date', 'const'
+    |
+    */
+    'resource_subdir_rule' => 'month',
+
+    'storage_disk' => 'local',
+
+    'cache_driver' => 'file',
+
 ];
 ```
 

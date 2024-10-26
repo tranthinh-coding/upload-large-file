@@ -3,22 +3,21 @@
 return [
     /*
      |--------------------------------------------------------------------------
-     | Đường dẫn lưu trữ file tạm thời
+     | The temporary file path
      |--------------------------------------------------------------------------
-     |
      */
     'temp_path' => 'chunk-upload-temp',
 
     /*
+     | The temporary file expire time
      |
-     | Thời gian hết hạn cho file tạm thời
      | Default: 24h
      */
     'chunk_expire' => 60 * 60 * 24,
 
     /*
     |--------------------------------------------------------------------------
-    | Thư mục gốc lưu trữ file
+    | The directory path to store the final file
     |--------------------------------------------------------------------------
     |
      */
@@ -26,15 +25,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Quy tắc tạo thư mục con
+    | The subdirectory rule
     |--------------------------------------------------------------------------
     |
-    | | 【Cài đặt chung】Phân theo năm, theo tháng, theo ngày, thư mục con hằng số.
+    | * General settings: Organize by year, month, date, subdirectory, or none.
     |
-    | | Hỗ trợ các tùy chọn: 'year', 'month', 'date', 'const'
+    | * Supported options: 'year', 'month', 'date', null
     |
     */
-    'resource_subdir_rule' => 'month',
+    'resource_subdir_rule' => null,
 
     'storage_disk' => 'local',
 

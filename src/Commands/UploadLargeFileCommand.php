@@ -3,6 +3,7 @@
 namespace Think\UploadLargeFile\Commands;
 
 use Illuminate\Console\Command;
+use Think\UploadLargeFile\Utils;
 
 class UploadLargeFileCommand extends Command
 {
@@ -12,28 +13,14 @@ class UploadLargeFileCommand extends Command
 
     public function handle(): int
     {
-        $tempPath = config('upload-large-file.temp_path');
-        $expire = config('upload-large-file.chunk_expire');
+        $pruneSuccess = Utils::pruneChunksExpired();
 
-        if (! file_exists($tempPath)) {
+        if ($pruneSuccess) {
+            $this->info('Expired chunks pruned successfully.');
             return self::FAILURE;
         }
 
-        $files = scandir($tempPath);
-        foreach ($files as $file) {
-            if ($file == '.' || $file == '..') {
-                continue;
-            }
-
-            $filePath = $tempPath.'/'.$file;
-            $fileTime = filemtime($filePath);
-            $now = time();
-
-            if ($now - $fileTime > $expire) {
-                unlink($filePath);
-            }
-        }
-
+        $this->error('Failed to prune expired chunks.');
         return self::SUCCESS;
     }
 }
