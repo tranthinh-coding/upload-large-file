@@ -81,11 +81,11 @@ class UploadLargeFile
     private function receiveRequestInfo(Request $request): array
     {
         $uploadId = Utils::getUploadId();
-        $totalFile = (int)$request->get('total_chunks_file');
+        $totalFile = (int) $request->get('total_chunks_file');
         $filename = $request->get('filename');
         $chunk = $request->file('file');
         $chunkNumber = $request->get('chunk_number');
-        $randomChunkName = Str::random(40) . '.part';
+        $randomChunkName = Str::random(40).'.part';
 
         return [
             'uploadId' => $uploadId,

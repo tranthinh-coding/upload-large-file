@@ -11,7 +11,7 @@ describe('Should validate request', function () {
             'filename' => 'test.txt',
         ]);
 
-        $uploadLargeFile = new \Think\UploadLargeFile\UploadLargeFile();
+        $uploadLargeFile = new \Think\UploadLargeFile\UploadLargeFile;
 
         $res = $uploadLargeFile->upload($request);
 
@@ -26,7 +26,7 @@ describe('Should validate request', function () {
             'file' => 'test',
         ]);
 
-        $uploadLargeFile = new \Think\UploadLargeFile\UploadLargeFile();
+        $uploadLargeFile = new \Think\UploadLargeFile\UploadLargeFile;
 
         $res = $uploadLargeFile->upload($request);
 
@@ -44,7 +44,7 @@ describe('Should validate request', function () {
             'file' => UploadedFile::fake()->create('test.txt', 1000),
         ]);
 
-        $uploadLargeFile = new \Think\UploadLargeFile\UploadLargeFile();
+        $uploadLargeFile = new \Think\UploadLargeFile\UploadLargeFile;
 
         $res = $uploadLargeFile->upload($request);
 
@@ -61,7 +61,7 @@ describe('Should validate request', function () {
             'file' => UploadedFile::fake()->create('test.txt', 1000),
         ]);
 
-        $uploadLargeFile = new \Think\UploadLargeFile\UploadLargeFile();
+        $uploadLargeFile = new \Think\UploadLargeFile\UploadLargeFile;
 
         $res = $uploadLargeFile->upload($request);
 
@@ -78,7 +78,7 @@ describe('Should validate request', function () {
             'file' => UploadedFile::fake()->create('test.txt', 1000),
         ]);
 
-        $uploadLargeFile = new \Think\UploadLargeFile\UploadLargeFile();
+        $uploadLargeFile = new \Think\UploadLargeFile\UploadLargeFile;
 
         $res = $uploadLargeFile->upload($request);
 
@@ -96,7 +96,7 @@ describe('Should validate request', function () {
             'file' => UploadedFile::fake()->create('test.txt', 1000),
         ]);
 
-        $uploadLargeFile = new \Think\UploadLargeFile\UploadLargeFile();
+        $uploadLargeFile = new \Think\UploadLargeFile\UploadLargeFile;
 
         $res = $uploadLargeFile->upload($request);
 
