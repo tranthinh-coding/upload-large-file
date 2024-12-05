@@ -4,8 +4,8 @@ namespace Think\UploadLargeFile;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -59,10 +59,10 @@ class UploadLargeFile
      * Validate the request
      * @return true|array
      */
-    private function validate(): true|array
+    private function validate(Request $request): true|array
     {
         try {
-            Request::validate([
+            $request->validate([
                 'total_chunks_file' => 'required|integer',
                 'filename' => 'required|string',
                 'file' => 'required|file',
@@ -82,13 +82,13 @@ class UploadLargeFile
      * Receive the request info
      * @return array
      */
-    private function receiveRequestInfo(): array
+    private function receiveRequestInfo(Request $request): array
     {
         $uploadId = Utils::getUploadId();
-        $totalFile = (int)Request::get('total_chunks_file');
-        $filename = Request::get('filename');
-        $chunk = Request::file('file');
-        $chunkNumber = Request::get('chunk_number');
+        $totalFile = (int)$request->get('total_chunks_file');
+        $filename = $request->get('filename');
+        $chunk = $request->file('file');
+        $chunkNumber = $request->get('chunk_number');
         $randomChunkName = Str::random(40) . '.part';
 
         return [
@@ -142,9 +142,9 @@ class UploadLargeFile
      * Handle upload the file
      * @return array
      */
-    public function upload(): array
+    public function upload(Request $request): array
     {
-        $validate = $this->validate();
+        $validate = $this->validate($request);
         if ($validate !== true) {
             return $validate;
         }
@@ -159,7 +159,7 @@ class UploadLargeFile
             'chunk' => $chunk,
             'randomChunkName' => $randomChunkName,
             'chunkNumber' => $chunkNumber,
-        ] = $this->receiveRequestInfo();
+        ] = $this->receiveRequestInfo($request);
 
         $this->storage->putFileAs($this->tempPath, $chunk, $randomChunkName);
 
